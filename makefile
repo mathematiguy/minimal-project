@@ -1,4 +1,4 @@
-IMAGE := docker.dragonfly.co.nz/reddit-chatbot
+IMAGE := docker.dragonfly.co.nz/minimal-project
 RUN ?= docker run $(INTERACT) --rm -v $$(pwd):/work -w /work -u $(UID):$(GID) $(IMAGE)
 UID ?= $(shell id -u)
 GID ?= $(shell id -g)
