@@ -1,4 +1,6 @@
-IMAGE := docker.dragonfly.co.nz/minimal-project
+DOCKER_REGISTRY := docker.dragonfly.co.nz
+IMAGE_NAME := minimal-project
+IMAGE := $(DOCKER_REGISTRY)/$(IMAGE_NAME)
 RUN ?= docker run $(INTERACT) --rm -v $$(pwd):/work -w /work -u $(UID):$(GID) $(IMAGE)
 UID ?= $(shell id -u)
 GID ?= $(shell id -g)
