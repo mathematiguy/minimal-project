@@ -7,6 +7,28 @@ GID ?= $(shell id -g)
 DOCKER_ARGS ?= 
 GIT_TAG ?= $(shell git log --oneline | head -n1 | awk '{print $$1}')
 
+JUPYTER_PASSWORD ?= jupyter
+JUPYTER_PORT ?= 8888
+.PHONY: jupyter
+jupyter: IMAGE=$(DOCKER_REGISTRY)/kupu-tokau/jupyter
+jupyter: UID=root
+jupyter: GID=root
+jupyter: DOCKER_ARGS=-u $(UID):$(GID) --rm -it -p $(JUPYTER_PORT):$(JUPYTER_PORT) -e NB_USER=$$USER -e NB_UID=$(UID) -e NB_GID=$(GID)
+jupyter: .jupyter-docker
+	$(RUN) jupyter lab \
+		--allow-root \
+		--port $(JUPYTER_PORT) \
+		--NotebookApp.password=$(shell $(RUN) \
+			python -c \
+			"from IPython.lib import passwd; print(passwd('$(JUPYTER_PASSWORD)'))")
+
+jupyter-docker: IMAGE=$(DOCKER_REGISTRY)/kupu-tokau/jupyter
+jupyter-docker:
+	rm -f $@ && \
+	docker build --tag $(IMAGE):$(GIT_TAG) -f Dockerfile.jupyter . && \
+	docker tag $(IMAGE):$(GIT_TAG) $(IMAGE):latest && \
+	touch .$@
+
 .PHONY: docker
 docker:
 	docker build --tag $(IMAGE):$(GIT_TAG) .
