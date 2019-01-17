@@ -1,5 +1,5 @@
 DOCKER_REGISTRY := docker.dragonfly.co.nz
-IMAGE_NAME := minimal-project
+IMAGE_NAME := $(shell basename `git rev-parse --show-toplevel`)
 IMAGE := $(DOCKER_REGISTRY)/$(IMAGE_NAME)
 RUN ?= docker run $(DOCKER_ARGS) --rm -v $$(pwd):/work -w /work -u $(UID):$(GID) $(IMAGE)
 UID ?= $(shell id -u)
