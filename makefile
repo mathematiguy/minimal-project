@@ -1,5 +1,5 @@
 DOCKER_REGISTRY := docker.dragonfly.co.nz
-IMAGE_NAME := $(shell basename `git rev-parse --show-toplevel`)
+IMAGE_NAME := $(shell basename `git rev-parse --show-toplevel` | tr '[:upper:]' '[:lower:]')
 IMAGE := $(DOCKER_REGISTRY)/$(IMAGE_NAME)
 RUN ?= docker run $(DOCKER_ARGS) --rm -v $$(pwd):/work -w /work -u $(UID):$(GID) $(IMAGE)
 UID ?= $(shell id -u)
@@ -24,7 +24,7 @@ jupyter:
 
 .PHONY: docker
 docker:
-	docker build --tag $(IMAGE):$(GIT_TAG) .
+	docker build $(DOCKER_ARGS) --tag $(IMAGE):$(GIT_TAG) .
 	docker tag $(IMAGE):$(GIT_TAG) $(IMAGE):latest
 
 .PHONY: docker-push
