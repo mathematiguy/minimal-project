@@ -1,11 +1,11 @@
-IMAGE_NAME := $(shell basename `git rev-parse --show-toplevel` | tr '[:upper:]' '[:lower:]')
+REPO_NAME := $(shell basename `git rev-parse --show-toplevel` | tr '[:upper:]' '[:lower:]')
 GIT_TAG ?= $(shell git log --oneline | head -n1 | awk '{print $$1}')
 DOCKER_REGISTRY := mathematiguy
-IMAGE := $(DOCKER_REGISTRY)/$(IMAGE_NAME)
+IMAGE := $(DOCKER_REGISTRY)/$(REPO_NAME)
 HAS_DOCKER ?= $(shell which docker)
-RUN ?= $(if $(HAS_DOCKER), docker run $(DOCKER_ARGS) --rm -v $$(pwd):/work -w /work -u $(UID):$(GID) $(IMAGE))
-UID ?= $(shell id -u)
-GID ?= $(shell id -g)
+RUN ?= $(if $(HAS_DOCKER), docker run $(DOCKER_ARGS) --rm -v $$(pwd):/home/kaimahi/$(REPO_NAME) -w /home/kaimahi/$(REPO_NAME) -u $(UID):$(GID) $(IMAGE))
+UID ?= kaimahi
+GID ?= kaimahi
 DOCKER_ARGS ?=
 
 .PHONY: docker docker-push docker-pull enter enter-root
