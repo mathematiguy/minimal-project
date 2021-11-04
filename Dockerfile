@@ -7,7 +7,7 @@ RUN apt update
 
 # Set timezone to Auckland
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y locales tzdata
+RUN apt-get install -y locales tzdata git
 RUN locale-gen en_NZ.UTF-8
 RUN dpkg-reconfigure locales
 RUN echo "Pacific/Auckland" > /etc/timezone
