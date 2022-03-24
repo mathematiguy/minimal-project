@@ -29,10 +29,10 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 # Install python
 ENV PYTHON_VERSION 3.9
 RUN apt update
-RUN apt install -y python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils
-RUN rm /usr/bin/python3 && ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python3
+RUN apt install -y python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils python3-apt
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION}
 
-RUN pip3 install --upgrade pip
+# Install python packages
+RUN python${PYTHON_VERSION} -m pip install --upgrade pip
 COPY requirements.txt /root/requirements.txt
-RUN pip3 install -r /root/requirements.txt
+RUN python${PYTHON_VERSION} -m pip install -r /root/requirements.txt
