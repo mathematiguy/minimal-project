@@ -39,6 +39,6 @@ RUN pip3 install -r /root/requirements.txt
 
 # Install local package
 COPY pkg /code/pkg
-COPY setup.py /code/pkg
-RUN python${PYTHON_VERSION} -m  pip install -e /code/pkg
-ENV PYTHONPATH="/code/pkg:${PYTHONPATH}"
+COPY setup.py /code
+RUN python${PYTHON_VERSION} -m pip install -e /code
+ENV PYTHONPATH="/code:${PYTHONPATH}"
