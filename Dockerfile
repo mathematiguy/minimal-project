@@ -36,3 +36,9 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION}
 RUN pip3 install --upgrade pip
 COPY requirements.txt /root/requirements.txt
 RUN pip3 install -r /root/requirements.txt
+
+# Install local package
+COPY pkg /code/pkg
+COPY setup.py /code/pkg
+RUN python${PYTHON_VERSION} -m  pip install -e /code/pkg
+ENV PYTHONPATH="/code/pkg:${PYTHONPATH}"
