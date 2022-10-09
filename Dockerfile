@@ -1,37 +1,35 @@
 FROM ubuntu:18.04
 
-# Use New Zealand mirrors
-RUN sed -i 's/archive/nz.archive/' /etc/apt/sources.list
-
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update
 
-# Set timezone to Auckland
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y locales tzdata git
-RUN locale-gen en_NZ.UTF-8
-RUN dpkg-reconfigure locales
-RUN echo "Pacific/Auckland" > /etc/timezone
-RUN dpkg-reconfigure -f noninteractive tzdata
-ENV LANG en_NZ.UTF-8
-ENV LANGUAGE en_NZ:en
-
-# Create user 'kaimahi' to create a home directory
-RUN useradd kaimahi
-RUN mkdir -p /home/kaimahi/
-RUN chown -R kaimahi:kaimahi /home/kaimahi
-ENV HOME /home/kaimahi
+# Create user 'user' to create a home directory
+RUN useradd user
+RUN mkdir -p /home/user/
+RUN chown -R user:user /home/user
+ENV HOME /home/user
 
 # Install apt packages
 RUN apt update
-RUN apt install -y awscli curl software-properties-common
+RUN apt install -y curl wget software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 
 # Install python
 ENV PYTHON_VERSION 3.9
+ENV PYTHON python${PYTHON_VERSION}
 RUN apt update
-RUN apt install -y python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils
-RUN rm /usr/bin/python3 && ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python3
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION}
+RUN apt install -y ${PYTHON}-dev ${PYTHON}-distutils
+RUN rm /usr/bin/python3 && ln -s /usr/bin/${PYTHON} /usr/bin/python3
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | ${PYTHON}
+
+# Set default python version
+RUN update-alternatives --install /usr/bin/python python /usr/bin/${PYTHON} 1
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/${PYTHON} 1
+
+# Install pip
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | ${PYTHON}
+RUN update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip${PYTHON_VERSION} 1
+RUN update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip${PYTHON_VERSION} 1
 
 RUN pip3 install --upgrade pip
 COPY requirements.txt /root/requirements.txt
