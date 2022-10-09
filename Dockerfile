@@ -18,6 +18,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 ENV PYTHON_VERSION 3.9
 ENV PYTHON python${PYTHON_VERSION}
 RUN apt update
+
 RUN apt install -y ${PYTHON}-dev ${PYTHON}-distutils
 RUN rm /usr/bin/python3 && ln -s /usr/bin/${PYTHON} /usr/bin/python3
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | ${PYTHON}
@@ -31,6 +32,7 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py | ${PYTHON}
 RUN update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip${PYTHON_VERSION} 1
 RUN update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip${PYTHON_VERSION} 1
 
+# Install python packages
 RUN pip3 install --upgrade pip
 COPY requirements.txt /root/requirements.txt
 RUN pip3 install -r /root/requirements.txt
