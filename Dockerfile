@@ -43,7 +43,7 @@ RUN update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip${P
 # Install python packages
 RUN pip3 install --upgrade pip
 COPY requirements.txt /root/requirements.txt
-RUN pip3 install -r /root/requirements.txt
+RUN pip3 install --timeout 120 -r /root/requirements.txt
 
 # Install local package
 COPY pkg /code/pkg
