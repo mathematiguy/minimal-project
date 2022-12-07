@@ -8,5 +8,5 @@ setup(
     url="https://github.com/mathematiguy/minimal-project",
     author="Caleb Moses",
     author_email="calebjdmoses@gmail.com",
-    include_package_data=True,
+    include_package_data=True
 )
