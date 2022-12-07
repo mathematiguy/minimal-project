@@ -13,8 +13,8 @@ From: ubuntu:20.04
 # Add files at build time
 %files
         requirements.txt
-        pkg
-        setup.py
+        pkg /code/pkg
+        setup.py /code/setup.py
 
 ################# Section: Defining the system #################################
 # Commands in the %post section are executed within the container.
@@ -47,7 +47,7 @@ From: ubuntu:20.04
         pip3 install -r requirements.txt
 
         echo "Install local package.."
-        python -m pip install -e .
+        python -m pip install -e /code
 
         echo "Creating mount points.."
         mkdir /dataset
