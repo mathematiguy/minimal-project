@@ -4,9 +4,9 @@ setup(
     name="pkg",
     version="0.1",
     packages=find_packages(exclude=["tests*"]),
-    description="A python package for manipulating crossref data on a spark cluster",
-    url="https://github.com/dragonfly-science/mbie-future-pathways",
+    description="A minimal python project template",
+    url="https://github.com/mathematiguy/minimal-project",
     author="Caleb Moses",
-    author_email="caleb@dragonfly.co.nz",
+    author_email="calebjdmoses@gmail.com",
     include_package_data=True,
 )
