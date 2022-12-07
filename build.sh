@@ -2,25 +2,11 @@
 
 set -x
 
-export GIT_REPO=`git config --get remote.origin.url`
-export GIT_BRANCH=`git branch --show-current .`
-
-# Use git oauth token
-git config --global url."https://${GIT_OAUTH_TOKEN}@github.com/".insteadOf git@github.com:
-git config --global user.email "gorby@dragonfly.co.nz"
-git config --global user.name "Gorby"
-
-# Set up the dvc cache
-dvc config cache.type symlink
-dvc cache dir /work/dvc-cache
-
-if [ ${CLEAR_CACHE} ]; then dvc gc --workspace -f ; fi
-
 # Pull the cache
-dvc pull || true
+dvc pull
 
 # Checkout the dvc project
-dvc checkout || true
+dvc checkout
 
 # Run the project
 dvc repro
