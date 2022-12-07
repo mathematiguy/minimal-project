@@ -25,7 +25,11 @@ From: ubuntu:20.04
         
         echo "Installing Tools with apt-get"
         apt-get update
-        apt-get install -y curl wget unzip software-properties-common git
+        apt-get install -y curl \
+                wget \
+                unzip \
+                software-properties-common \
+                git
         apt-get clean
 
         echo "Install python3.9.."
