@@ -1,45 +1,41 @@
-REPO_NAME := $(shell basename `git rev-parse --show-toplevel` | tr '[:upper:]' '[:lower:]')
-GIT_TAG ?= $(shell git log --oneline | head -n1 | awk '{print $$1}')
-DOCKER_REGISTRY := mathematiguy
-IMAGE := $(DOCKER_REGISTRY)/$(REPO_NAME)
-HAS_DOCKER ?= $(shell which docker)
-RUN ?= $(if $(HAS_DOCKER), docker run $(DOCKER_ARGS) -it --rm -v $$(pwd):/code -w /code -u $(UID):$(GID) $(IMAGE))
-UID ?= myuser
-GID ?= myuser
-DOCKER_ARGS ?=
+# This Makefile automates routine tasks for this Singularity-based project.
+IMAGE ?= container.sif
+RUN ?= singularity exec $(FLAGS) $(IMAGE)
+SINGULARITY_ARGS ?=
+DVC_CACHE_DIR ?= $(shell dvc cache dir)
+FLAGS ?= --nv -B $$(pwd):/code --pwd /code -B $(DVC_CACHE_DIR)
+VENV_PATH ?= venv
 
-.PHONY: docker docker-push docker-pull enter enter-root
+include cluster/makefile
 
-JUPYTER_PASSWORD ?= jupyter
-JUPYTER_PORT ?= 8888
-.PHONY: jupyter
-jupyter: DOCKER_ARGS=-u $(UID):$(GID) --rm -it -p $(JUPYTER_PORT):$(JUPYTER_PORT) -e NB_USER=$$USER -e NB_UID=$(UID) -e NB_GID=$(GID)
+.PHONY: show_logs trigger scratch archive repro predict start jupyter container push shell
+
+run:
+	$(RUN) bash run.sh
+
 jupyter:
-	$(RUN) jupyter lab \
-		--port $(JUPYTER_PORT) \
-		--ip 0.0.0.0 \
-		--NotebookApp.password="$(shell $(RUN) \
-			python3 -c \
-			"from notebook.auth import passwd; print(passwd('$(JUPYTER_PASSWORD)', 'sha1'))")"
+	sudo singularity exec $(FLAGS) sandbox.sif jupyter lab \
+		--ip=0.0.0.0 \
+		--no-browser \
+		--port 8888 \
+    --allow-root
 
-docker:
-	docker build $(DOCKER_ARGS) --tag $(IMAGE):$(GIT_TAG) .
-	docker tag $(IMAGE):$(GIT_TAG) $(IMAGE):latest
+init:
+	dvc init && mkdir -p .dvc/cache
 
-docker-push:
-	docker push $(IMAGE):$(GIT_TAG)
-	docker push $(IMAGE):latest
+# Builds a Singularity container from the Singularity definition file.
+# Note: This command requires sudo privileges.
+container: $(IMAGE)
+$(IMAGE): Singularity requirements.txt
+	sudo singularity build --force $(IMAGE) $(SINGULARITY_ARGS) Singularity
 
-docker-pull:
-	docker pull $(IMAGE):$(GIT_TAG)
-	docker tag $(IMAGE):$(GIT_TAG) $(IMAGE):latest
+# Starts a shell within the Singularity container, with the virtual environment activated.
+shell:
+	singularity shell $(FLAGS) $(IMAGE) $(SINGULARITY_ARGS) bash
 
-enter: DOCKER_ARGS=-it
-enter:
-	$(RUN) bash
+sandbox: sandbox.sif
+sandbox.sif: $(IMAGE)
+	sudo singularity build --force --sandbox sandbox.sif $(IMAGE)
 
-enter-root: DOCKER_ARGS=-it
-enter-root: UID=root
-enter-root: GID=root
-enter-root:
-	$(RUN) bash
+sandbox-shell: sandbox.sif
+	sudo singularity shell --writable sandbox.sif
