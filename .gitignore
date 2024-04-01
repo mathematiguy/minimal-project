@@ -103,5 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 pkg.egg-info
+
+# Added by me
 sandbox.sif/
 *.sif
+cluster/secrets.yaml
