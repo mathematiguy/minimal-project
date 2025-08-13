@@ -2,7 +2,7 @@
 # Reference of the kind of base you want to use (e.g., docker, debootstrap, shub).
 Bootstrap: docker
 # Select the docker image you want to use (Here we choose tensorflow)
-From: ubuntu:20.04
+From: ubuntu:22.04
 
 # Environment variables that should be sourced at runtime.
 %environment
@@ -32,15 +32,15 @@ From: ubuntu:20.04
                 git
         apt-get clean
 
-        echo "Install python3.9.."
-        apt install -y python3.9-dev python3.9-distutils
-        update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
-        update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+        echo "Install python3.11.."
+        apt install -y python3.11-dev python3.11-distutils
+        update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
+        update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
         echo "Installing pip.."
-        curl -sS https://bootstrap.pypa.io/get-pip.py | python3.9
-        update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip3.9 1
-        update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip3.9 1
+        curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+        update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip3.11 1
+        update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip3.11 1
 
         echo "Installing requirements.."
         pip3 install --upgrade pip
